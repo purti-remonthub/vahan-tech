@@ -74,6 +74,15 @@
   --gradient-hero: radial-gradient(ellipse at top, rgba(225,6,0,0.15), transparent 60%), linear-gradient(180deg, #060A0F 0%, #0B1220 100%);
   --shadow-red: 0 10px 40px -10px rgba(225,6,0,0.5);
   --shadow-card: 0 8px 32px -8px rgba(0,0,0,0.6);
+
+  /* Thank you page specific variables */
+  --moto-bg: #060A0F;
+  --moto-card: #101827;
+  --moto-offwhite: #F5F7FA;
+  --moto-muted: #A7B0C0;
+  --moto-red: #E10600;
+  --moto-green: #00E676;
+  --moto-amber: #FFC857;
 }
 
 .dark {
