@@ -121,10 +121,10 @@ function Header() {
 // ────────────────────────── HERO ──────────────────────────
 function Hero() {
   const trustIndicators = [
-    { icon: Users, label: "500+", sub: "Learners" },
-    { icon: Trophy, label: "15+", sub: "Motorsport Engineers" },
+    { icon: Users, label: "1000+", sub: "Learners" },
+    { icon: Trophy, label: "150+", sub: "Motorsport Professionals" },
     { icon: Award, label: "4.9/5", sub: "Workshop Rating" },
-    { icon: Database, label: "Lifetime", sub: "Replay Access" },
+    { icon: Database, label: "Replay Access", sub: "" },
   ];
   
   // Only 3 shown on mobile (drop "15+ Motorsport Engineers")
@@ -138,7 +138,7 @@ function Hero() {
         <img
           src="/images/hero-telemetry.png"
           alt="Race Engineer analyzing telemetry data"
-          className="w-full h-full object-cover object-right"
+          className="w-full h-full object-cover object-left"
         />
         {/* dark gradient so text is readable */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/80" />
@@ -452,10 +452,10 @@ function Problem() {
         <img
           src="/images/workflow-engineer.png"
           alt=""
-          className="absolute inset-0 w-full h-full object-cover object-left"
+          className="absolute inset-0 w-full h-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[var(--background)] via-[var(--background)]/80 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[var(--background)]/60 via-transparent to-[var(--background)]/60" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[var(--background)] via-[var(--background)]/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[var(--background)]/50 via-transparent to-[var(--background)]/50" />
       </div>
 
       {/* Mobile: full-bleed background */}
@@ -465,8 +465,8 @@ function Problem() {
           alt=""
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-[var(--background)]/80" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[var(--background)]/60 via-transparent to-[var(--background)]/60" />
+        <div className="absolute inset-0 bg-[var(--background)]/70" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[var(--background)]/50 via-transparent to-[var(--background)]/50" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
@@ -551,28 +551,54 @@ function Audience() {
     "Drivers who want to understand telemetry",
   ];
   return (
-    <Section id="audience" eyebrow="WHO IT'S FOR">
-      <SectionHeading>Built for <span className="text-gradient-red">Serious Motorsport Learners.</span></SectionHeading>
-      <div className="grid lg:grid-cols-3 gap-4 mt-8">
-        <div className="lg:col-span-2 grid sm:grid-cols-2 gap-3">
-          {yes.map((y) => (
-            <div key={y} className="flex items-center gap-3 rounded-lg border border-border bg-[var(--card)] px-4 py-3.5">
-              <CheckCircle2 className="size-5 text-[var(--telemetry-green)] shrink-0" />
-              <span className="text-sm">{y}</span>
+    <section id="audience" className="relative py-16 sm:py-24 bg-[#0A0E13]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Left Column: Heading and "Yes" List */}
+          <div>
+            <div className="flex items-center gap-3 mb-5">
+              <div className="h-px w-8 bg-[var(--racing-red)]" />
+              <span className="font-mono text-[10px] sm:text-xs tracking-[0.25em] text-[var(--racing-red)]">WHO IT'S FOR</span>
             </div>
-          ))}
-        </div>
-        <Card className="border-[var(--warning-amber)]/30">
-          <div className="flex items-center gap-2 mb-3">
-            <XCircle className="size-5 text-[var(--warning-amber)]" />
-            <h3 className="font-heading text-lg">Not For You If</h3>
+            <h2 className="font-display text-3xl sm:text-5xl leading-[1.05] mb-6 max-w-lg text-white">
+              Built for <span className="text-gradient-red">Serious Motorsport Learners.</span>
+            </h2>
+            <ul className="space-y-3 mt-8">
+              {yes.map((y) => (
+                <li key={y} className="flex items-start gap-3 text-sm text-gray-300">
+                  <CheckCircle2 className="size-5 text-[var(--telemetry-green)] shrink-0 mt-0.5" />
+                  <span>{y}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-          <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
-            This workshop is not for people looking for a passive motivational webinar. You should join only if you are ready to sit with data, think like an engineer, and practice after the session.
-          </p>
-        </Card>
+
+          {/* Right Column: Image with "Not For You If" card overlay */}
+          <div className="relative rounded-2xl overflow-hidden border border-white/10 min-h-[300px] lg:min-h-[450px]">
+            <img
+              src="/images/workflow-engineer.png"
+              alt="Engineer analyzing race data"
+              className="absolute inset-0 w-full h-full object-cover object-center"
+            />
+            {/* Dark overlay for text readability, and blend with background */}
+            <div className="absolute inset-0 bg-black/50 md:bg-black/30 lg:bg-black/50" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0A0E13] via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#0A0E13]/20" />
+
+            {/* "Not For You If" Card */}
+            <div className="absolute bottom-6 right-6 max-w-xs w-full p-6 rounded-xl border border-[var(--warning-amber)]/30 bg-black/70 backdrop-blur-sm shadow-lg">
+              <div className="flex items-center gap-2 mb-3">
+                <XCircle className="size-5 text-[var(--warning-amber)]" />
+                <h3 className="font-heading text-lg text-white">Not For You If</h3>
+              </div>
+              <p className="text-sm text-gray-300 leading-relaxed">
+                This workshop is not for people looking for a passive motivational webinar. You should join only if you are ready to sit with data, think like an engineer, and practice after the session.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
-    </Section>
+    </section>
   );
 }
 
@@ -606,32 +632,41 @@ function Agenda() {
           <span className="font-mono text-[10px] sm:text-xs tracking-[0.25em] text-[var(--racing-red)]">THE AGENDA</span>
         </div>
         <h2 className="font-display text-3xl sm:text-5xl text-white mb-2">6-Hour <span className="text-gradient-red">Practical Agenda</span></h2>
-        <p className="font-mono text-xs text-[var(--warning-amber)] mb-10">
-          // Proposed practical flow. Final topic names may be updated before batch announcement.
-        </p>
 
         {/* Vertical timeline */}
         <div className="relative">
-          <div className="absolute left-4 sm:left-6 top-2 bottom-2 w-px bg-gradient-to-b from-[var(--racing-red)] via-[var(--steel)] to-transparent" />
-          <div className="space-y-4">
+          {/* Timeline line - visible on desktop only */}
+          <div className="hidden lg:block absolute left-6 top-2 bottom-2 w-px bg-gradient-to-b from-[var(--racing-red)] via-[var(--steel)] to-transparent" />
+          
+          <div className="space-y-6 lg:space-y-4">
             {hours.map((h, i) => (
-              <div key={h.h} className="relative pl-12 sm:pl-16">
-                <div className="absolute left-0 top-4 size-9 sm:size-12 rounded-full border-2 border-[var(--racing-red)] bg-[#060A0F] flex items-center justify-center font-mono text-[10px] sm:text-xs font-bold text-[var(--racing-red)]">
-                  {String(i + 1).padStart(2, "0")}
-                </div>
-                <div className="rounded-xl border border-border bg-[var(--card)]/80 backdrop-blur-sm p-5 sm:p-6 hover:border-[var(--racing-red)]/40 transition">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="font-mono text-[10px] tracking-widest text-[var(--racing-red)]">{h.h.toUpperCase()}</span>
-                    <div className="h-px flex-1 bg-border" />
+              <div key={h.h} className="relative lg:pl-16">
+                {/* Number circle */}
+                <div className="flex items-start gap-4 lg:block">
+                  <div className="flex-shrink-0 lg:absolute lg:left-0 lg:top-4 size-12 lg:size-12 rounded-full border-2 border-[var(--racing-red)] bg-[#060A0F] flex items-center justify-center font-mono text-sm lg:text-xs font-bold text-[var(--racing-red)]">
+                    {String(i + 1).padStart(2, "0")}
                   </div>
-                  <h3 className="font-heading text-xl sm:text-2xl text-white mb-3">{h.t}</h3>
-                  <ul className="space-y-1.5">
-                    {h.points.map((p) => (
-                      <li key={p} className="flex gap-2 text-sm text-[var(--muted-foreground)]">
-                        <span className="text-[var(--racing-red)] mt-0.5">›</span>{p}
-                      </li>
-                    ))}
-                  </ul>
+                  
+                  {/* Content */}
+                  <div className="flex-1 lg:rounded-xl lg:border lg:border-border lg:bg-[var(--card)]/80 lg:backdrop-blur-sm lg:p-6 lg:hover:border-[var(--racing-red)]/40 lg:transition">
+                    {/* Desktop only: HOUR label with divider */}
+                    <div className="hidden lg:flex items-center gap-3 mb-3">
+                      <span className="font-mono text-[10px] tracking-widest text-[var(--racing-red)]">{h.h.toUpperCase()}</span>
+                      <div className="h-px flex-1 bg-border" />
+                    </div>
+                    
+                    <h3 className="font-heading text-xl lg:text-2xl text-white mb-2 lg:mb-3">{h.t}</h3>
+                    <p className="text-sm text-gray-400 lg:hidden">{h.points.join(", ")}</p>
+                    
+                    {/* Desktop only: bullet list */}
+                    <ul className="hidden lg:block space-y-1.5">
+                      {h.points.map((p) => (
+                        <li key={p} className="flex gap-2 text-sm text-[var(--muted-foreground)]">
+                          <span className="text-[var(--racing-red)] mt-0.5">›</span>{p}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
             ))}
@@ -645,22 +680,23 @@ function Agenda() {
       </div>
 
       {/* Bottom quote with full-width background image */}
-      <div className="relative mt-12 lg:mt-20 overflow-hidden">
+      <div className="relative mt-12 lg:mt-20 overflow-hidden min-h-[300px] lg:min-h-[400px]">
         <img
           src="/images/race-control.png"
           alt="Race control room"
-          className="absolute inset-0 w-full h-full object-cover object-center"
+          className="absolute inset-0 w-full h-full object-cover object-right scale-110 brightness-110"
         />
         {/* mobile: lighter overlay so image shows clearly; desktop: darker */}
-        <div className="absolute inset-0 bg-black/40 lg:bg-black/60" />
+        <div className="absolute inset-0 bg-black/25 lg:bg-black/40" />
         {/* top & bottom fade into the section background */}
-        <div className="absolute inset-x-0 top-0 h-12 lg:h-20 bg-gradient-to-b from-[#060A0F] to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-12 lg:h-20 bg-gradient-to-t from-[#060A0F] to-transparent" />
+        <div className="absolute inset-x-0 top-0  lg:h-24 bg-gradient-to-b from-[#060A0F] to-transparent" />
+        <div className="absolute inset-x-0 bottom-0  lg:h-24 bg-gradient-to-t from-[#060A0F] to-transparent" />
 
-        <div className="relative py-24 lg:py-24 text-center px-6">
-          <h3 className="font-display text-2xl sm:text-4xl lg:text-5xl text-white leading-tight uppercase">
-            Motorsport is not about driving harder.<br />
-            It's about <span className="text-gradient-red">understanding data faster.</span>
+        <div className="relative py-20 lg:py-32 px-6 flex items-center min-h-[300px] lg:min-h-[400px]">
+          <h3 className="font-display text-3xl leading-tight lg:text-center lg:text-5xl xl:text-6xl lg:leading-tight text-white uppercase max-w-5xl lg:mx-auto">
+            Motorsport is not about driving harder.{" "}
+            <span className="lg:block">It's about </span>
+            <span className="text-gradient-red">understanding data faster.</span>
           </h3>
         </div>
       </div>
@@ -678,7 +714,7 @@ function WhatYouGet() {
     "Access to workshop recordings after live session",
     "WhatsApp batch group for updates",
     "Practical roadmap to continue learning",
-    "Exclusive upgrade offer for the full course",
+    "Live Q&A and doubt solving",
   ];
   return (
     <Section id="value" eyebrow="WHAT'S INCLUDED">
@@ -705,23 +741,43 @@ function WhyVahanTech() {
     { icon: Wrench, title: "Practical Training, Real-World Application" },
   ];
   return (
-    <Section id="why" eyebrow="WHY VAHANTECH">
-      <SectionHeading>
-        Learn From Engineers Who Work at the Intersection of<br />
-        <span className="text-gradient-red">Motorsport, Vehicle Dynamics & Data.</span>
-      </SectionHeading>
-      <p className="text-[var(--muted-foreground)] max-w-3xl mb-10 leading-relaxed">
-        VahanTech Engineering has trained 1000+ students and works across motorsport engineering, vehicle dynamics, data acquisition, automotive testing, diagnostics, ECU development, and connected vehicle technologies.
-      </p>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        {cards.map((c) => (
-          <Card key={c.title} className="text-center hover:border-[var(--racing-red)]/40 transition">
-            <c.icon className="size-7 text-[var(--racing-red)] mx-auto mb-3" />
-            <h3 className="text-sm font-medium leading-snug">{c.title}</h3>
-          </Card>
-        ))}
+    <section id="why" className="relative py-16 sm:py-24 bg-[#060A0F] overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <img
+          src="/images/why-vahan.png"
+          alt="Race control environment"
+          className="w-full h-full object-cover object-center scale-125 sm:scale-60 "
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#060A0F]/50 via-[#060A0F]/40 to-[#060A0F]" />
       </div>
-    </Section>
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-5">
+          <div className="h-px w-8 bg-[var(--racing-red)]" />
+          <span className="font-mono text-[10px] sm:text-xs tracking-[0.25em] text-[var(--racing-red)]">WHY VAHANTECH</span>
+        </div>
+        
+        <h2 className="font-display text-3xl sm:text-5xl leading-[1.05] mb-6 max-w-4xl text-white">
+          Learn From Engineers Who Work at the Intersection of<br />
+          <span className="text-gradient-red">Motorsport, Vehicle Dynamics & Data.</span>
+        </h2>
+        
+        <p className="text-[var(--muted-foreground)] max-w-3xl mb-10 leading-relaxed">
+          VahanTech Engineering has trained 1000+ students and works across motorsport engineering, vehicle dynamics, data acquisition, automotive testing, diagnostics, ECU development, and connected vehicle technologies.
+        </p>
+        
+        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          {cards.map((c) => (
+            <div key={c.title} className="rounded-xl border border-border bg-[var(--card)]/80 backdrop-blur-sm p-6 text-center hover:border-[var(--racing-red)]/40 transition">
+              <c.icon className="size-7 text-[var(--racing-red)] mx-auto mb-3" />
+              <h3 className="text-sm font-medium leading-snug text-white">{c.title}</h3>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -905,7 +961,7 @@ function FinalCTA() {
       />
 
       {/* Mobile overlay: dark center so text pops, slight red tint */}
-      <div className="absolute inset-0 bg-black/70 lg:hidden" />
+      <div className="absolute inset-0 bg-black/53 lg:hidden" />
       <div className="absolute inset-0 bg-[var(--racing-red)]/10 lg:hidden" />
 
       {/* Desktop overlay: left-to-right gradient */}
@@ -958,7 +1014,7 @@ function Footer() {
           <h4 className="font-mono text-[10px] tracking-widest text-[var(--racing-red)] mb-3">CONTACT</h4>
           <ul className="space-y-2 text-sm text-[var(--muted-foreground)]">
             <li className="flex items-center gap-2"><Mail className="size-4" /><a href="mailto:admin@vahantech.in" className="hover:text-white">admin@vahantech.in</a></li>
-            <li className="flex items-center gap-2"><Phone className="size-4" /><a href="tel:+916261393717" className="hover:text-white">+91 626139 3717</a></li>
+            <li className="flex items-center gap-2"><Phone className="size-4" /><a href="tel:+916287894109" className="hover:text-white">+91 628789 4109</a></li>
             <li className="flex items-center gap-2"><Globe className="size-4" /><a href="https://www.vahantech.in/course/data-analysis-in-motorsport/" target="_blank" rel="noreferrer" className="hover:text-white">vahantech.in</a></li>
           </ul>
         </div>
