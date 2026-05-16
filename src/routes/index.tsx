@@ -34,9 +34,9 @@ const NEXT_BATCH_TIME = "Weekend Slot — To Be Announced";
 //   Motorsport/Automotive Background,
 //   Primary Interest: Race Engineering / Vehicle Dynamics / Data Analysis /
 //                     Formula Student / Automotive R&D / Just Exploring
-function handlePayment() {
-  window.location.href = import.meta.env.VITE_RAZORPAY_PAYMENT_LINK;
-}
+  function handlePayment() {
+    window.location.href = import.meta.env.VITE_RAZORPAY_PAYMENT_LINK;
+  }
 
 // =============================================================================
 
