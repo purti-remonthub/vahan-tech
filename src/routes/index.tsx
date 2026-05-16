@@ -35,12 +35,7 @@ const NEXT_BATCH_TIME = "Weekend Slot — To Be Announced";
 //   Primary Interest: Race Engineering / Vehicle Dynamics / Data Analysis /
 //                     Formula Student / Automotive R&D / Just Exploring
 function handlePayment() {
-  if (RAZORPAY_PAYMENT_LINK === "PASTE_RAZORPAY_PAYMENT_LINK_HERE") {
-    // Open GitHub repository
-    window.open("https://github.com/remonthub/workshop-vte", "_blank", "noopener,noreferrer");
-    return;
-  }
-  window.open(RAZORPAY_PAYMENT_LINK, "_blank", "noopener,noreferrer");
+  window.location.href = import.meta.env.VITE_RAZORPAY_PAYMENT_LINK;
 }
 
 // =============================================================================
