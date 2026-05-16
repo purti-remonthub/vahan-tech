@@ -103,7 +103,7 @@ function Header() {
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
           {/* <a href="#workshop" className="text-gray-300 hover:text-white transition border-b-2 border-transparent hover:border-[var(--racing-red)]">WORKSHOP</a> */}
           <a href="#agenda" className="text-gray-300 hover:text-white transition border-b-2 border-transparent hover:border-[var(--racing-red)]">AGENDA</a>
-          <a href="#price" className="text-gray-300 hover:text-white transition border-b-2 border-transparent hover:border-[var(--racing-red)]">PRICE</a>
+          <a href="#offer" className="text-gray-300 hover:text-white transition border-b-2 border-transparent hover:border-[var(--racing-red)]">PRICE</a>
           <a href="#faq" className="text-gray-300 hover:text-white transition border-b-2 border-transparent hover:border-[var(--racing-red)]">FAQ</a>
         </nav>
         <button onClick={handlePayment} className="hidden sm:inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold text-white transition hover:scale-[1.02]" style={{ background: "var(--gradient-red)" }}>
