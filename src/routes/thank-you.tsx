@@ -145,6 +145,9 @@ function SectionHeading({
 function ThankYouPage() {
   const { payment_id, order_id } = useRazorpayParams();
 
+  // Replace this with your actual WhatsApp group link
+  const WHATSAPP_GROUP_LINK = "https://chat.whatsapp.com/YOUR_GROUP_INVITE_CODE";
+
   const details: Array<{ label: string; value: string; icon: React.ReactNode }> = [
     { label: "Workshop", value: "Data Analysis in Motorsports", icon: <Trophy className="h-4 w-4" /> },
     { label: "Duration", value: "6 Hours", icon: <Clock className="h-4 w-4" /> },
@@ -288,30 +291,39 @@ function ThankYouPage() {
           </div>
 
           {/* CTAs */}
-          {/* <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap">
-            <a
-              href="PASTE_WHATSAPP_GROUP_LINK_HERE"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-md bg-[var(--moto-green)] px-6 py-3 font-heading text-sm uppercase tracking-wider text-black transition hover:brightness-110"
-            >
-              <MessageCircle className="h-4 w-4" /> Join Workshop WhatsApp Group
-            </a>
-            <a
+          <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap">
+            {WHATSAPP_GROUP_LINK && WHATSAPP_GROUP_LINK !== "https://chat.whatsapp.com/YOUR_GROUP_INVITE_CODE" ? (
+              <a
+                href={WHATSAPP_GROUP_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-[var(--moto-green)] px-6 py-3 font-heading text-sm uppercase tracking-wider text-black transition hover:brightness-110"
+              >
+                <MessageCircle className="h-4 w-4" /> Join Workshop WhatsApp Group
+              </a>
+            ) : (
+              <button
+                disabled
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-[var(--moto-muted)] px-6 py-3 font-heading text-sm uppercase tracking-wider text-black opacity-50 cursor-not-allowed"
+              >
+                <MessageCircle className="h-4 w-4" /> Join Workshop WhatsApp Group
+              </button>
+            )}
+            {/* <a
               href="https://www.vahantech.in/course/data-analysis-in-motorsport/"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 rounded-md bg-[var(--moto-red)] px-6 py-3 font-heading text-sm uppercase tracking-wider text-[var(--moto-offwhite)] transition hover:brightness-110"
             >
               Explore Full Course <ExternalLink className="h-4 w-4" />
-            </a>
+            </a> */}
             <Link
               to="/"
               className="inline-flex items-center justify-center gap-2 rounded-md border border-white/15 bg-transparent px-6 py-3 font-heading text-sm uppercase tracking-wider text-[var(--moto-offwhite)] transition hover:bg-white/5"
             >
               <ArrowLeft className="h-4 w-4" /> Back to Workshop Page
             </Link>
-          </div> */}
+          </div>
         </div>
       </section>
 
