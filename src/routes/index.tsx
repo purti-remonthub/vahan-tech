@@ -36,7 +36,8 @@ const NEXT_BATCH_TIME = "Weekend Slot — To Be Announced";
 //                     Formula Student / Automotive R&D / Just Exploring
 function handlePayment() {
   if (RAZORPAY_PAYMENT_LINK === "PASTE_RAZORPAY_PAYMENT_LINK_HERE") {
-    alert("Razorpay payment link not configured yet. Please contact support@vahantech.in to reserve your seat.");
+    // Open GitHub repository
+    window.open("https://github.com/remonthub/workshop-vte", "_blank", "noopener,noreferrer");
     return;
   }
   window.open(RAZORPAY_PAYMENT_LINK, "_blank", "noopener,noreferrer");
@@ -105,9 +106,9 @@ function Header() {
           </div>
         </a>
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
-          <a href="#workshop" className="text-gray-300 hover:text-white transition border-b-2 border-transparent hover:border-[var(--racing-red)]">WORKSHOP</a>
+          {/* <a href="#workshop" className="text-gray-300 hover:text-white transition border-b-2 border-transparent hover:border-[var(--racing-red)]">WORKSHOP</a> */}
           <a href="#agenda" className="text-gray-300 hover:text-white transition border-b-2 border-transparent hover:border-[var(--racing-red)]">AGENDA</a>
-          <a href="#instructor" className="text-gray-300 hover:text-white transition border-b-2 border-transparent hover:border-[var(--racing-red)]">INSTRUCTOR</a>
+          <a href="#price" className="text-gray-300 hover:text-white transition border-b-2 border-transparent hover:border-[var(--racing-red)]">PRICE</a>
           <a href="#faq" className="text-gray-300 hover:text-white transition border-b-2 border-transparent hover:border-[var(--racing-red)]">FAQ</a>
         </nav>
         <button onClick={handlePayment} className="hidden sm:inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold text-white transition hover:scale-[1.02]" style={{ background: "var(--gradient-red)" }}>
