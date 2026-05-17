@@ -4,6 +4,7 @@ import {
   Flag, Gauge, Timer, Trophy, Zap, CheckCircle2, XCircle, Clock,
   Database, LineChart, Users, Award, Wrench, Activity, ArrowRight,
   Mail, Phone, Globe, Calendar, MapPin, GraduationCap, ChevronRight,
+  MessageCircle, PlayCircle,
 } from "lucide-react";
 import { TelemetryDashboard } from "@/components/TelemetryDashboard";
 import { FAQ } from "@/components/FAQ";
@@ -22,10 +23,17 @@ const seatsRemaining: number | null = null;
 const _batchParts = (import.meta.env.VITE_CLASSES_DATES?.split(",") ?? [])
   .map((s: string) => s.trim())
   .filter(Boolean);
+const _fmt = (raw: string) => {
+  const d = new Date(raw);
+  if (isNaN(d.getTime())) return raw; // fallback: show as-is if not a valid date
+  const day = d.toLocaleDateString("en-GB", { weekday: "short" });
+  const date = d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+  return `${day} ${date}`;
+};
 const NEXT_BATCH_DATE =
   _batchParts.length >= 2
-    ? `${_batchParts[0]} – ${_batchParts[1]}`
-    : (_batchParts[0] ?? "To Be Announced");
+    ? `${_fmt(_batchParts[0])} – ${_fmt(_batchParts[1])}`
+    : (_batchParts[0] ? _fmt(_batchParts[0]) : "To Be Announced");
 const NEXT_BATCH_TIME = "Weekend Slot — To Be Announced";
 
 // For production, replace payment link with Razorpay Standard Checkout or Razorpay Payment Button.
@@ -88,17 +96,13 @@ function Index() {
 
 // ────────────────────────── HEADER ──────────────────────────
 function Header() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-[#0A0E13]/95 border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <a href="#top" className="flex items-center gap-3">
-          <div className="size-9 rounded-lg bg-[var(--gradient-red)] flex items-center justify-center" style={{ background: "var(--gradient-red)" }}>
-            <Flag className="size-5 text-white" />
-          </div>
-          <div className="leading-tight">
-            <div className="font-display text-xl tracking-wider text-white">VahanTech</div>
-            <div className="font-mono text-[9px] text-gray-400 tracking-widest -mt-0.5">Engineering</div>
-          </div>
+        <a href="#top" className="shrink-0">
+          <img src="/images/logo.png" alt="VahanTech Engineering" className="h-10 w-auto" />
         </a>
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
           {/* <a href="#workshop" className="text-gray-300 hover:text-white transition border-b-2 border-transparent hover:border-[var(--racing-red)]">WORKSHOP</a> */}
@@ -106,189 +110,228 @@ function Header() {
           <a href="#offer" className="text-gray-300 hover:text-white transition border-b-2 border-transparent hover:border-[var(--racing-red)]">PRICE</a>
           <a href="#faq" className="text-gray-300 hover:text-white transition border-b-2 border-transparent hover:border-[var(--racing-red)]">FAQ</a>
         </nav>
-        <button onClick={handlePayment} className="hidden sm:inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold text-white transition hover:scale-[1.02]" style={{ background: "var(--gradient-red)" }}>
-          RESERVE SEAT · {WORKSHOP_PRICE}
-        </button>
+
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handlePayment}
+            className="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs sm:text-sm font-semibold text-white tracking-wide transition hover:scale-[1.02]"
+            style={{ background: "var(--gradient-red)" }}
+          >
+            RESERVE SEAT – {WORKSHOP_PRICE}
+          </button>
+          {/* Mobile hamburger */}
+          <button
+            className="lg:hidden flex flex-col justify-center gap-1.5 p-1"
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-label="Menu"
+          >
+            <span className="block w-5 h-0.5 bg-white" />
+            <span className="block w-5 h-0.5 bg-white" />
+            <span className="block w-5 h-0.5 bg-white" />
+          </button>
+        </div>
       </div>
+
+      {/* Mobile nav drawer */}
+      {menuOpen && (
+        <div className="lg:hidden border-t border-white/10 bg-[#0A0E13] px-4 py-4 flex flex-col gap-4 font-mono text-xs tracking-widest">
+          <a href="#top" className="text-[var(--racing-red)]" onClick={() => setMenuOpen(false)}>WORKSHOP</a>
+          <a href="#agenda" className="text-gray-300" onClick={() => setMenuOpen(false)}>AGENDA</a>
+          <a href="#trainer" className="text-gray-300" onClick={() => setMenuOpen(false)}>INSTRUCTOR</a>
+          <a href="#audience" className="text-gray-300" onClick={() => setMenuOpen(false)}>WHO SHOULD JOIN</a>
+          <a href="#faq" className="text-gray-300" onClick={() => setMenuOpen(false)}>FAQ</a>
+        </div>
+      )}
     </header>
   );
 }
 
 // ────────────────────────── HERO ──────────────────────────
+const HERO_TELEMETRY = [
+  {
+    label: "SPEED (KM/H)",
+    value: "241",
+    delta: "12",
+    up: true,
+    color: "#E10600",
+    points: "0,35 30,28 60,32 90,18 120,26 150,12 180,20",
+  },
+  {
+    label: "THROTTLE (%)",
+    value: "98",
+    delta: "8",
+    up: true,
+    color: "#00E676",
+    points: "0,38 30,25 60,18 90,12 120,22 150,8 180,16",
+  },
+  {
+    label: "LAP TIME (S)",
+    value: "1:24.532",
+    delta: "0.732",
+    up: false,
+    color: "#FFC857",
+    points: "0,18 30,28 60,14 90,24 120,16 150,30 180,12",
+  },
+];
+
+function HeroTelemetryCard({
+  card,
+  compact = false,
+}: {
+  card: (typeof HERO_TELEMETRY)[number];
+  compact?: boolean;
+}) {
+  return (
+    <div className="backdrop-blur-md bg-black/70 border border-white/10 rounded-xl p-3">
+      <div className="font-mono text-[9px] text-gray-400 uppercase tracking-wider mb-1">
+        {card.label}
+      </div>
+      <div className="flex items-baseline gap-1.5">
+        <span className={`font-display text-white ${compact ? "text-xl" : "text-2xl"}`}>
+          {card.value}
+        </span>
+        <span
+          className={`font-mono text-[9px] ${card.up ? "text-[var(--telemetry-green)]" : "text-[var(--warning-amber)]"}`}
+        >
+          {card.up ? "▲" : "▼"} {card.delta}
+        </span>
+      </div>
+      <svg
+        className={`w-full mt-2 ${compact ? "h-8" : "h-10"}`}
+        viewBox="0 0 180 40"
+        preserveAspectRatio="none"
+      >
+        <polyline points={card.points} fill="none" stroke={card.color} strokeWidth="1.5" />
+      </svg>
+    </div>
+  );
+}
+
 function Hero() {
   const trustIndicators = [
     { icon: Users, label: "1000+", sub: "Learners" },
     { icon: Trophy, label: "150+", sub: "Motorsport Professionals" },
     { icon: Award, label: "4.9/5", sub: "Workshop Rating" },
-    { icon: Database, label: "Replay Access", sub: "" },
+    { icon: Clock, label: "6 Hours", sub: "Live & Practical" },
   ];
-  
-  // Only 3 shown on mobile (drop "15+ Motorsport Engineers")
-  const mobileTrust = trustIndicators.filter((_, i) => i !== 1);
 
   return (
-    <section id="top" className="relative overflow-hidden min-h-screen flex items-center bg-[#0A0E13]">
+    <section id="top" className="relative overflow-hidden bg-[#0A0E13] lg:min-h-screen lg:flex lg:items-center">
 
-      {/* ── MOBILE: full-bleed background image ── */}
-      <div className="absolute inset-0 lg:hidden">
+      {/* ── Car image background ── */}
+      <div className="absolute inset-0">
         <img
-          src="/images/hero-telemetry.png"
-          alt="Race Engineer analyzing telemetry data"
-          className="w-full h-full object-cover object-left"
+          src="/images/hero-car.png"
+          alt="VahanTech race car on track"
+          className="w-full h-full object-cover object-center"
         />
-        {/* dark gradient so text is readable */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/80" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
+        {/* Mobile: strong left overlay so text reads, car peeks from right */}
+        <div
+          className="absolute inset-0 lg:hidden"
+          style={{ background: "linear-gradient(to right, rgba(6,10,15,0.97) 0%, rgba(6,10,15,0.85) 50%, rgba(6,10,15,0.35) 75%, rgba(6,10,15,0.1) 100%)" }}
+        />
+        <div className="absolute inset-0 lg:hidden bg-gradient-to-b from-[#060A0F]/50 via-transparent to-[#060A0F]" />
+        {/* Desktop: reveal more of the car on the right */}
+        <div
+          className="absolute inset-0 hidden lg:block"
+          style={{ background: "linear-gradient(to right, #060A0F 0%, #060A0F 38%, rgba(6,10,15,0.75) 52%, rgba(6,10,15,0.1) 100%)" }}
+        />
+        <div className="absolute inset-0 hidden lg:block bg-gradient-to-b from-[#060A0F]/30 via-transparent to-[#060A0F]/60" />
       </div>
 
-      {/* ── DESKTOP: image pinned to right side ── */}
-      <div className="absolute right-0 top-0 bottom-0 w-[55%] hidden lg:block">
-        <div className="relative h-full">
-          <img
-            src="/images/hero-telemetry.png"
-            alt="Race Engineer analyzing telemetry data"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0A0E13] via-[#0A0E13]/60 to-transparent" />
-
-          {/* Floating Telemetry Cards */}
-          <div className="absolute bottom-[15%] left-[10%] grid grid-cols-3 gap-3">
-            <div className="backdrop-blur-md bg-black/60 border border-[var(--racing-red)]/30 rounded-lg p-3">
-              <div className="text-[10px] font-mono text-gray-400 uppercase">Sector Gain</div>
-              <div className="text-2xl font-display text-[var(--telemetry-green)]">-0.241s</div>
-              <div className="text-[10px] text-gray-500">vs Session Best</div>
-              <svg className="w-full h-12 mt-2" viewBox="0 0 100 40">
-                <polyline points="0,30 20,25 40,28 60,20 80,15 100,10" fill="none" stroke="var(--telemetry-green)" strokeWidth="2"/>
-              </svg>
-            </div>
-            <div className="backdrop-blur-md bg-black/60 border border-border rounded-lg p-3">
-              <div className="text-[10px] font-mono text-gray-400 uppercase">Brake Trace</div>
-              <div className="text-2xl font-display text-white">98%</div>
-              <div className="text-[10px] text-gray-500">Efficiency</div>
-              <svg className="w-full h-12 mt-2" viewBox="0 0 100 40">
-                <polyline points="0,20 20,25 40,15 60,28 80,22 100,30" fill="none" stroke="#E10600" strokeWidth="2"/>
-              </svg>
-            </div>
-            <div className="backdrop-blur-md bg-black/60 border border-border rounded-lg p-3">
-              <div className="text-[10px] font-mono text-gray-400 uppercase">Top Speed</div>
-              <div className="text-2xl font-display text-[var(--warning-amber)]">241 <span className="text-sm">km/h</span></div>
-              <div className="text-[10px] text-gray-500">Max</div>
-              <svg className="w-full h-12 mt-2" viewBox="0 0 100 40">
-                <polyline points="0,35 20,30 40,25 60,28 80,20 100,18" fill="none" stroke="var(--warning-amber)" strokeWidth="2"/>
-              </svg>
-            </div>
-          </div>
+      {/* ── Desktop telemetry cards pinned top-right ── */}
+      <div className="absolute right-6 xl:right-12 top-10 hidden lg:flex flex-col gap-3 w-[44%] xl:w-[42%] z-10">
+        <div className="grid grid-cols-3 gap-3">
+          {HERO_TELEMETRY.map((card) => (
+            <HeroTelemetryCard key={card.label} card={card} />
+          ))}
         </div>
+        {/* <div className="backdrop-blur-md bg-black/70 border border-white/10 rounded-xl p-3 w-48">
+          <div className="font-mono text-[9px] text-gray-400 uppercase tracking-wider mb-1">SECTOR 2</div>
+          <div className="font-display text-2xl text-[var(--telemetry-green)]">-0.245s</div>
+        </div> */}
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-20 pb-[250px] lg:pb-20 w-full z-10">
-        <div className="lg:max-w-[50%]">
-          <div className="space-y-8">
-            <div className="space-y-5">
-              {/* Mobile: pill badge | Desktop: plain mono text */}
-              <div>
-                <span className="inline-block lg:hidden rounded-full bg-[var(--racing-red)] px-4 py-1.5 text-xs font-semibold text-white tracking-widest uppercase">
-                  LIVE WORKSHOP
-                </span>
-                <div className="hidden lg:block text-[var(--racing-red)] font-mono text-xs tracking-[0.25em] uppercase">
-                  LIVE WORKSHOP FOR ASPIRING ENGINEERS
-                </div>
-              </div>
+      {/* ── Main content ── */}
+      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 pt-12 pb-10 lg:py-24 z-10">
+        <div className="lg:max-w-[52%]">
+          <div className="space-y-6">
 
-              <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl leading-[0.95] tracking-tight text-white">
-                Stop guessing.<br />
-                Start reading<br />
-                the <span className="text-gradient-red">race car</span><br />
-                through data.
-              </h1>
+            {/* Badge — dark pill with red dot */}
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/60 backdrop-blur-sm px-4 py-1.5 text-[10px] font-semibold text-white tracking-widest uppercase">
+              <span className="size-1.5 rounded-full bg-[var(--racing-red)] shrink-0" />
+              LIVE WORKSHOP FOR ASPIRING ENGINEERS
+            </span>
 
-              <p className="text-base text-gray-300 max-w-xl leading-relaxed">
-                A 6-hour practical workshop that teaches you how motorsport engineers analyze telemetry and extract real performance.
-              </p>
-            </div>
+            {/* Heading */}
+            <h1 className="font-display text-[clamp(2.8rem,10vw,5rem)] lg:text-7xl leading-[0.93] tracking-tight text-white uppercase">
+              Stop guessing.<br />
+              Start reading<br />
+              the <span className="text-gradient-red">race car</span><br />
+              through data.
+            </h1>
 
-            {/* CTA Buttons — stacked full-width on mobile, row on desktop */}
-            <div className="flex flex-col lg:flex-row gap-3">
+            {/* Description */}
+            <p className="text-sm text-gray-300 max-w-sm lg:max-w-lg leading-relaxed">
+              A 6-hour practical workshop that teaches you how motorsport engineers analyze telemetry and extract real performance.
+            </p>
+
+            {/* CTA Buttons — full width on mobile */}
+            <div className="flex flex-col gap-3 sm:flex-row">
               <button
                 onClick={handlePayment}
-                className="w-full lg:w-auto inline-flex items-center justify-center gap-2 rounded-lg px-8 py-4 text-base font-semibold text-white tracking-wide transition hover:scale-[1.02]"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg px-7 py-4 text-sm font-semibold text-white tracking-wide transition hover:scale-[1.02]"
                 style={{ background: "var(--gradient-red)" }}
               >
-                RESERVE YOUR SEAT — {WORKSHOP_PRICE}
+                RESERVE YOUR SEAT – {WORKSHOP_PRICE} <ArrowRight className="size-4" />
               </button>
-              <button className="w-full lg:w-auto inline-flex items-center justify-center gap-2 rounded-lg border border-white/30 bg-black/40 backdrop-blur px-6 py-4 text-base font-medium text-white hover:bg-white/10 transition">
-                 View Workshop Agenda
-              </button>
+              <a
+                href="#agenda"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg border border-white/20 bg-black/40 backdrop-blur px-6 py-4 text-sm font-medium text-white hover:bg-white/10 transition"
+              >
+                <PlayCircle className="size-4" /> VIEW WORKSHOP AGENDA
+              </a>
             </div>
 
-            {/* Trust Indicators — 3 on mobile, 4 on desktop */}
-            <div className="pt-6 border-t border-white/10">
-              {/* Mobile: 3 items */}
-              <div className="flex flex-wrap items-center gap-6 lg:hidden">
-                {mobileTrust.map((item) => (
-                  <div key={item.label} className="flex items-center gap-2">
-                    <item.icon className="size-5 text-[var(--racing-red)]" />
-                    <div>
-                      <div className="text-white font-semibold text-base leading-none">{item.label}</div>
-                      <div className="text-gray-400 text-xs mt-0.5">{item.sub}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              {/* Desktop: all 4 items */}
-              <div className="hidden lg:flex flex-wrap items-center gap-8">
+            {/* Trust Indicators */}
+            <div className="pt-5 border-t border-white/10">
+              {/* Mobile: 2×2 grid | Desktop: single flex row */}
+              <div className="grid grid-cols-2 gap-x-4 gap-y-4 lg:flex lg:flex-wrap lg:items-start lg:gap-x-8 lg:gap-y-3">
                 {trustIndicators.map((item) => (
-                  <div key={item.label} className="flex items-center gap-3">
-                    <item.icon className="size-5 text-[var(--racing-red)]" />
+                  <div key={item.label} className="flex items-center gap-2.5">
+                    <item.icon className="size-4 sm:size-5 text-[var(--racing-red)] shrink-0" />
                     <div>
-                      <div className="text-white font-semibold text-lg leading-none">{item.label}</div>
-                      <div className="text-gray-400 text-xs mt-1">{item.sub}</div>
+                      <div className="text-white font-semibold text-sm sm:text-base leading-none">{item.label}</div>
+                      {item.sub && <div className="text-gray-400 text-[10px] sm:text-xs mt-0.5">{item.sub}</div>}
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      {/* ── MOBILE ONLY: image + floating cards block ── */}
-      <div className="lg:hidden absolute bottom-0 left-0 right-0 h-[220px] pointer-events-none">
-        <img
-          src="/images/hero-telemetry.png"
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover object-top"
-        />
-        {/* top fade into the dark overlay above */}
-        <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/80 to-transparent" />
-        {/* bottom fade */}
-        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#0A0E13] to-transparent" />
+            {/* Mobile: telemetry cards 2×2 grid */}
+            {/* <div className="lg:hidden grid grid-cols-2 gap-2">
+              {HERO_TELEMETRY.map((card) => (
+                <HeroTelemetryCard key={card.label} card={card} compact />
+              ))}
+             
+            </div> */}
 
-        {/* Floating Telemetry Cards */}
-        <div className="absolute bottom-6 left-4 right-4 grid grid-cols-3 gap-2 pointer-events-auto">
-          <div className="backdrop-blur-md bg-black/70 border border-[var(--racing-red)]/30 rounded-lg p-2.5">
-            <div className="text-[9px] font-mono text-gray-400 uppercase">Sector Gain</div>
-            <div className="text-lg font-display text-[var(--telemetry-green)]">-0.241s</div>
-            <div className="text-[9px] text-gray-500">vs Session Best</div>
-            <svg className="w-full h-8 mt-1" viewBox="0 0 100 40">
-              <polyline points="0,30 20,25 40,28 60,20 80,15 100,10" fill="none" stroke="var(--telemetry-green)" strokeWidth="2"/>
-            </svg>
-          </div>
-          <div className="backdrop-blur-md bg-black/70 border border-border rounded-lg p-2.5">
-            <div className="text-[9px] font-mono text-gray-400 uppercase">Brake Trace</div>
-            <div className="text-lg font-display text-white">98%</div>
-            <div className="text-[9px] text-gray-500">Efficiency</div>
-            <svg className="w-full h-8 mt-1" viewBox="0 0 100 40">
-              <polyline points="0,20 20,25 40,15 60,28 80,22 100,30" fill="none" stroke="#E10600" strokeWidth="2"/>
-            </svg>
-          </div>
-          <div className="backdrop-blur-md bg-black/70 border border-border rounded-lg p-2.5">
-            <div className="text-[9px] font-mono text-gray-400 uppercase">Top Speed</div>
-            <div className="text-lg font-display text-[var(--warning-amber)]">241 <span className="text-xs">km/h</span></div>
-            <div className="text-[9px] text-gray-500">Max</div>
-            <svg className="w-full h-8 mt-1" viewBox="0 0 100 40">
-              <polyline points="0,35 20,30 40,25 60,28 80,20 100,18" fill="none" stroke="var(--warning-amber)" strokeWidth="2"/>
-            </svg>
+            {/* WhatsApp Community Banner */}
+            {/* <a
+              href="#"
+              className="flex items-center gap-3 rounded-xl border border-[var(--telemetry-green)]/25 bg-[var(--telemetry-green)]/5 px-4 py-3.5 transition hover:bg-[var(--telemetry-green)]/10 group"
+            >
+              <span className="shrink-0 size-10 flex items-center justify-center rounded-full bg-[var(--telemetry-green)]">
+                <MessageCircle className="size-5 text-black" />
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="font-semibold text-white text-sm">Join our WhatsApp Community</div>
+                <div className="text-gray-400 text-xs mt-0.5 leading-snug">Get updates, resources and connect with fellow engineers.</div>
+              </div>
+              <ChevronRight className="size-5 text-gray-500 shrink-0 transition group-hover:translate-x-0.5" />
+            </a> */}
+
           </div>
         </div>
       </div>
@@ -535,63 +578,239 @@ function Promise() {
 }
 
 // ────────────────────────── AUDIENCE ──────────────────────────
+// ── Audience helpers ──────────────────────────────────────
+function ArcGauge({ pct, color }: { pct: number; color: string }) {
+  const r = 36; const cx = 50; const cy = 54;
+  const startDeg = 135; const totalSweep = 270;
+  const pt = (deg: number) => {
+    const rad = ((deg - 90) * Math.PI) / 180;
+    return `${cx + r * Math.cos(rad)},${cy + r * Math.sin(rad)}`;
+  };
+  const arc = (sweep: number) => {
+    const [sx, sy] = pt(startDeg).split(",");
+    const endPt = pt(startDeg + sweep);
+    const large = sweep > 180 ? 1 : 0;
+    return `M${sx},${sy} A${r},${r} 0 ${large},1 ${endPt}`;
+  };
+  return (
+    // Fixed height so the SVG never overflows the card
+    <svg viewBox="0 0 100 95" height="86" style={{ display: "block", margin: "0 auto" }}>
+      {/* Background track */}
+      <path d={arc(totalSweep)} fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="8" strokeLinecap="round" />
+      {/* Value arc */}
+      <path d={arc((pct / 100) * totalSweep)} fill="none" stroke={color} strokeWidth="8" strokeLinecap="round" />
+      {/* Label */}
+      <text x={cx} y={cy + 7} textAnchor="middle" fontSize="20" fill="white" fontFamily="'Bebas Neue','Oswald',sans-serif">{pct}%</text>
+    </svg>
+  );
+}
+
+function Spark({ points, color }: { points: string; color: string }) {
+  return (
+    <svg viewBox="0 0 200 36" className="w-full h-7 mt-2" preserveAspectRatio="none">
+      <polyline points={points} fill="none" stroke={color} strokeWidth="1.5" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function CircuitSVG() {
+  return (
+    <svg viewBox="0 0 180 130" className="w-full h-full">
+      <path d="M30,65 C30,32 62,14 100,14 C138,14 162,35 165,62 C168,82 156,102 142,108 C128,114 116,104 104,107 C92,110 84,123 70,122 C50,121 30,98 30,65 Z"
+        fill="none" stroke="rgba(255,255,255,0.55)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M163,70 C166,88 155,105 142,110"
+        fill="none" stroke="#E10600" strokeWidth="4.5" strokeLinecap="round" />
+      <circle cx="164" cy="70" r="4" fill="#E10600" />
+    </svg>
+  );
+}
+
+function AudienceTelemetryPanel() {
+  const card = "rounded-xl bg-[#111820] border border-white/[0.07] p-3.5";
+
+  return (
+    <div className="relative rounded-2xl overflow-hidden bg-[#0D1219] border border-white/10 shadow-[0_30px_80px_-20px_rgba(225,6,0,0.3)] p-3.5">
+
+      {/* ── Desktop: CSS grid-template-areas ── */}
+      <div
+        className="hidden sm:grid gap-3"
+        style={{
+          gridTemplateColumns: "1fr 1fr 1fr",
+          gridTemplateRows: "auto auto auto",
+          gridTemplateAreas: `
+            "speed    laptime  sector2"
+            "throttle brake    sector2"
+            "lateralg car      car"
+          `,
+        }}
+      >
+        {/* SPEED */}
+        <div style={{ gridArea: "speed" }} className={card}>
+          <div className="font-mono text-[9px] uppercase tracking-widest text-gray-400">Speed</div>
+          <div className="font-display text-3xl text-white leading-none mt-1">241</div>
+          <div className="font-mono text-[9px] uppercase text-gray-500 mt-0.5">km/h</div>
+          <Spark points="0,28 20,20 45,26 65,14 90,22 110,10 135,18 155,8 175,14 200,6" color="#E10600" />
+        </div>
+
+        {/* LAP TIME */}
+        <div style={{ gridArea: "laptime" }} className={card}>
+          <div className="font-mono text-[9px] uppercase tracking-widest text-gray-400">Lap Time</div>
+          <div className="font-display text-2xl text-white leading-none mt-1">1:24.532</div>
+          <div className="font-mono text-[9px] text-[var(--telemetry-green)] mt-0.5">-0.732</div>
+          <Spark points="0,26 20,22 45,28 65,16 90,24 110,12 135,20 155,10 175,16 200,8" color="#00E676" />
+        </div>
+
+        {/* SECTOR 2 — spans rows 1 & 2 */}
+        <div style={{ gridArea: "sector2" }} className={`${card} relative overflow-hidden`}>
+          {/* Red dot decoration inside this card */}
+          <div className="absolute top-2 right-2 grid grid-cols-6 gap-[4px] opacity-30 pointer-events-none">
+            {Array.from({ length: 30 }).map((_, i) => (
+              <span key={i} className="size-[3px] rounded-full bg-[var(--racing-red)]" />
+            ))}
+          </div>
+          <div className="font-mono text-[9px] uppercase tracking-widest text-gray-400">Sector 2</div>
+          {/* Fixed height so this card's content never fights the auto row height */}
+          <div className="h-[130px] mt-2">
+            <CircuitSVG />
+          </div>
+          <div className="font-display text-2xl text-[var(--telemetry-green)] mt-3">-0.245s</div>
+        </div>
+
+        {/* THROTTLE */}
+        <div style={{ gridArea: "throttle" }} className={card}>
+          <div className="font-mono text-[9px] uppercase tracking-widest text-gray-400">
+            Throttle <span className="text-gray-600">%</span>
+          </div>
+          <div className="mt-1">
+            <ArcGauge pct={98} color="#00E676" />
+          </div>
+        </div>
+
+        {/* BRAKE */}
+        <div style={{ gridArea: "brake" }} className={card}>
+          <div className="font-mono text-[9px] uppercase tracking-widest text-gray-400">
+            Brake <span className="text-gray-600">%</span>
+          </div>
+          <div className="mt-1">
+            <ArcGauge pct={12} color="#E10600" />
+          </div>
+        </div>
+
+        {/* LATERAL G */}
+        <div style={{ gridArea: "lateralg" }} className={card}>
+          <div className="font-mono text-[9px] uppercase tracking-widest text-gray-400">Lateral G</div>
+          <div className="font-display text-3xl text-white leading-none mt-1">
+            1.32 <span className="text-base text-gray-400">G</span>
+          </div>
+          <Spark points="0,18 15,22 30,16 45,24 60,14 75,22 90,13 105,21 120,15 140,23 155,14 170,20 185,13 200,19" color="rgba(255,255,255,0.4)" />
+        </div>
+
+        {/* CAR IMAGE — proper grid cell */}
+        <div style={{ gridArea: "car" }} className="relative rounded-xl overflow-hidden min-h-[110px]">
+          <img
+            src="/images/hero-car.png"
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover object-center"
+          />
+          <div
+            className="absolute inset-0"
+            style={{ background: "linear-gradient(to right, #0D1219 0%, rgba(13,18,25,0.4) 35%, transparent 100%)" }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0D1219]/60 via-transparent to-transparent" />
+        </div>
+      </div>
+
+      {/* ── Mobile: simple 2-col grid ── */}
+      <div className="grid grid-cols-2 gap-3 sm:hidden">
+        <div className={card}>
+          <div className="font-mono text-[9px] uppercase tracking-widest text-gray-400">Speed</div>
+          <div className="font-display text-3xl text-white leading-none mt-1">241</div>
+          <div className="font-mono text-[9px] uppercase text-gray-500 mt-0.5">km/h</div>
+          <Spark points="0,28 20,20 45,26 65,14 90,22 110,10 135,18 155,8 175,14 200,6" color="#E10600" />
+        </div>
+        <div className={card}>
+          <div className="font-mono text-[9px] uppercase tracking-widest text-gray-400">Lap Time</div>
+          <div className="font-display text-2xl text-white leading-none mt-1">1:24.532</div>
+          <div className="font-mono text-[9px] text-[var(--telemetry-green)] mt-0.5">-0.732</div>
+          <Spark points="0,26 20,22 45,28 65,16 90,24 110,12 135,20 155,10 175,16 200,8" color="#00E676" />
+        </div>
+        <div className={card}>
+          <div className="font-mono text-[9px] uppercase tracking-widest text-gray-400">Throttle %</div>
+          <div className="mt-1"><ArcGauge pct={98} color="#00E676" /></div>
+        </div>
+        <div className={card}>
+          <div className="font-mono text-[9px] uppercase tracking-widest text-gray-400">Brake %</div>
+          <div className="mt-1"><ArcGauge pct={12} color="#E10600" /></div>
+        </div>
+        <div className={`${card} col-span-2`}>
+          <div className="font-mono text-[9px] uppercase tracking-widest text-gray-400">Lateral G</div>
+          <div className="font-display text-3xl text-white leading-none mt-1">
+            1.32 <span className="text-base text-gray-400">G</span>
+          </div>
+          <Spark points="0,18 15,22 30,16 45,24 60,14 75,22 90,13 105,21 120,15 140,23 155,14 170,20 185,13 200,19" color="rgba(255,255,255,0.4)" />
+        </div>
+        <div className={`${card} col-span-2 flex items-center gap-4`}>
+          <div className="w-28 h-20 shrink-0"><CircuitSVG /></div>
+          <div>
+            <div className="font-mono text-[9px] uppercase tracking-widest text-gray-400 mb-1">Sector 2</div>
+            <div className="font-display text-2xl text-[var(--telemetry-green)]">-0.245s</div>
+          </div>
+        </div>
+        {/* Car image strip */}
+        <div className="col-span-2 relative rounded-xl overflow-hidden h-32">
+          <img src="/images/hero-car.png" alt="" className="absolute inset-0 w-full h-full object-cover object-center" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0D1219]/70 via-transparent to-transparent" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Audience() {
   const yes = [
-    "Engineering students",
-    "Formula Student / Baja / Go-Kart team members",
-    "Motorsport enthusiasts",
-    "Aspiring race engineers",
-    "Automotive testing & validation engineers",
-    "Vehicle dynamics learners",
-    "Data analysts interested in motorsports",
-    "Drivers who want to understand telemetry",
+    { icon: GraduationCap, text: "Engineering students" },
+    { icon: Trophy, text: "Formula Student / Baja / Go-Kart team members" },
+    { icon: Users, text: "Motorsport enthusiasts" },
+    { icon: Flag, text: "Aspiring race engineers" },
+    { icon: Wrench, text: "Automotive testing & validation engineers" },
+    { icon: Activity, text: "Vehicle dynamics learners" },
+    { icon: LineChart, text: "Data analysts interested in motorsports" },
+    { icon: Gauge, text: "Drivers who want to understand telemetry" },
   ];
+
   return (
     <section id="audience" className="relative py-16 sm:py-24 bg-[#0A0E13]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Left Column: Heading and "Yes" List */}
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-10 items-center">
+
+          {/* Left: heading + list */}
           <div>
             <div className="flex items-center gap-3 mb-5">
               <div className="h-px w-8 bg-[var(--racing-red)]" />
               <span className="font-mono text-[10px] sm:text-xs tracking-[0.25em] text-[var(--racing-red)]">WHO IT'S FOR</span>
             </div>
-            <h2 className="font-display text-3xl sm:text-5xl leading-[1.05] mb-6 max-w-lg text-white">
-              Built for <span className="text-gradient-red">Serious Motorsport Learners.</span>
+            <h2 className="font-display text-4xl sm:text-5xl xl:text-6xl leading-[0.95] mb-8 text-white uppercase">
+              Built for{" "}
+              <span className="text-gradient-red">
+                Serious<br />Motorsport
+              </span>
+              <br />Learners.
             </h2>
-            <ul className="space-y-3 mt-8">
-              {yes.map((y) => (
-                <li key={y} className="flex items-start gap-3 text-sm text-gray-300">
-                  <CheckCircle2 className="size-5 text-[var(--telemetry-green)] shrink-0 mt-0.5" />
-                  <span>{y}</span>
+            <ul className="space-y-3">
+              {yes.map(({ icon: Icon, text }) => (
+                <li key={text} className="flex items-center gap-3 text-sm text-gray-300">
+                  <span className="shrink-0 size-8 rounded-full border border-[var(--racing-red)]/30 bg-[var(--racing-red)]/10 flex items-center justify-center">
+                    <Icon className="size-4 text-[var(--racing-red)]" />
+                  </span>
+                  {text}
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Right Column: Image with "Not For You If" card overlay */}
-          <div className="relative rounded-2xl overflow-hidden border border-white/10 min-h-[300px] lg:min-h-[450px]">
-            <img
-              src="/images/workflow-engineer.png"
-              alt="Engineer analyzing race data"
-              className="absolute inset-0 w-full h-full object-cover object-center"
-            />
-            {/* Dark overlay for text readability, and blend with background */}
-            <div className="absolute inset-0 bg-black/50 md:bg-black/30 lg:bg-black/50" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0A0E13] via-transparent to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#0A0E13]/20" />
+          {/* Right: telemetry dashboard */}
+          <AudienceTelemetryPanel />
 
-            {/* "Not For You If" Card */}
-            <div className="absolute bottom-6 right-6 max-w-xs w-full p-6 rounded-xl border border-[var(--warning-amber)]/30 bg-black/70 backdrop-blur-sm shadow-lg">
-              <div className="flex items-center gap-2 mb-3">
-                <XCircle className="size-5 text-[var(--warning-amber)]" />
-                <h3 className="font-heading text-lg text-white">Not For You If</h3>
-              </div>
-              <p className="text-sm text-gray-300 leading-relaxed">
-                This workshop is not for people looking for a passive motivational webinar. You should join only if you are ready to sit with data, think like an engineer, and practice after the session.
-              </p>
-            </div>
-          </div>
         </div>
       </div>
     </section>
