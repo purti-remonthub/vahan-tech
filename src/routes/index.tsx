@@ -24,8 +24,9 @@ const _batchParts = (import.meta.env.VITE_CLASSES_DATES?.split(",") ?? [])
   .map((s: string) => s.trim())
   .filter(Boolean);
 const _fmt = (raw: string) => {
-  const d = new Date(raw);
-  if (isNaN(d.getTime())) return raw; // fallback: show as-is if not a valid date
+  // Append T12:00:00 so ISO date strings are treated as local time, not UTC
+  const d = new Date(/^\d{4}-\d{2}-\d{2}$/.test(raw.trim()) ? `${raw.trim()}T12:00:00` : raw);
+  if (isNaN(d.getTime())) return raw;
   const day = d.toLocaleDateString("en-GB", { weekday: "short" });
   const date = d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
   return `${day} ${date}`;
@@ -260,7 +261,13 @@ function Hero() {
             {/* Badge — dark pill with red dot */}
             <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/60 backdrop-blur-sm px-4 py-1.5 text-[10px] font-semibold text-white tracking-widest uppercase">
               <span className="size-1.5 rounded-full bg-[var(--racing-red)] shrink-0" />
-              LIVE WORKSHOP FOR ASPIRING ENGINEERS
+              LIVE WORKSHOP
+              {NEXT_BATCH_DATE !== "To Be Announced" && (
+                <>
+                  <span className="w-px h-3 bg-white/20 shrink-0" />
+                  <span className="text-[var(--racing-red)]">{NEXT_BATCH_DATE}</span>
+                </>
+              )}
             </span>
 
             {/* Heading */}
