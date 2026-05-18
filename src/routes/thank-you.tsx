@@ -146,7 +146,7 @@ function ThankYouPage() {
   const { payment_id, order_id } = useRazorpayParams();
 
   // Replace this with your actual WhatsApp group link
-  const WHATSAPP_GROUP_LINK = "https://chat.whatsapp.com/YOUR_GROUP_INVITE_CODE";
+  const WHATSAPP_GROUP_LINK = "https://chat.whatsapp.com/FZmvtzHcs4qL5LHNttDVSf";
 
   const details: Array<{ label: string; value: string; icon: React.ReactNode }> = [
     { label: "Workshop", value: "Data Analysis in Motorsports", icon: <Trophy className="h-4 w-4" /> },

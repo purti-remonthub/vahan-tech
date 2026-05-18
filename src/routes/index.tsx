@@ -136,10 +136,10 @@ function Header() {
       {/* Mobile nav drawer */}
       {menuOpen && (
         <div className="lg:hidden border-t border-white/10 bg-[#0A0E13] px-4 py-4 flex flex-col gap-4 font-mono text-xs tracking-widest">
-          <a href="#top" className="text-[var(--racing-red)]" onClick={() => setMenuOpen(false)}>WORKSHOP</a>
+          {/* <a href="#top" className="text-[var(--racing-red)]" onClick={() => setMenuOpen(false)}>WORKSHOP</a> */}
           <a href="#agenda" className="text-gray-300" onClick={() => setMenuOpen(false)}>AGENDA</a>
-          <a href="#trainer" className="text-gray-300" onClick={() => setMenuOpen(false)}>INSTRUCTOR</a>
-          <a href="#audience" className="text-gray-300" onClick={() => setMenuOpen(false)}>WHO SHOULD JOIN</a>
+          <a href="#offer" className="text-gray-300" onClick={() => setMenuOpen(false)}>Price</a>
+          {/* <a href="#audience" className="text-gray-300" onClick={() => setMenuOpen(false)}>WHO SHOULD JOIN</a> */}
           <a href="#faq" className="text-gray-300" onClick={() => setMenuOpen(false)}>FAQ</a>
         </div>
       )}
@@ -827,7 +827,7 @@ function Audience() {
 // ────────────────────────── AGENDA ──────────────────────────
 function Agenda() {
   const hours = [
-    { h: "Hour 1", t: "Motorsport Data Foundations", points: ["What data engineers look at after a run", "Common telemetry channels: speed, RPM, throttle, brake, steering, G, tyre temperature", "How raw logged data becomes engineering insight"] },
+    { h: "Hour 1", t: "Motorsport Data Foundations", points: ["What data engineers look at after a run", "Common telemetry channels: speed, RPM, throttle, brake, steering, G-force, tyre temperature", "How raw logged data becomes engineering insight"] },
     { h: "Hour 2", t: "Reading Driver Inputs", points: ["Throttle trace", "Brake trace", "Steering trace", "Identifying over-driving, late braking, early throttle, inconsistent inputs"] },
     { h: "Hour 3", t: "Lap & Sector Comparison", points: ["Fast lap vs slow lap", "Sector delta", "Entry, mid-corner and exit analysis", "Where lap time is gained or lost"] },
     { h: "Hour 4", t: "Vehicle Dynamics Through Data", points: ["Grip, lateral G, understeer/oversteer indicators", "Tyre temperature & pressure interpretation", "Setup thinking from data"] },
