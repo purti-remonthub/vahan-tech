@@ -144,14 +144,28 @@ function SectionHeading({
 
 function ThankYouPage() {
   const { payment_id, order_id } = useRazorpayParams();
-
+  const _batchParts = (import.meta.env.VITE_CLASSES_DATES?.split(",") ?? [])
+  .map((s: string) => s.trim())
+  .filter(Boolean);
+const _fmt = (raw: string) => {
+  // Append T12:00:00 so ISO date strings are treated as local time, not UTC
+  const d = new Date(/^\d{4}-\d{2}-\d{2}$/.test(raw.trim()) ? `${raw.trim()}T12:00:00` : raw);
+  if (isNaN(d.getTime())) return raw;
+  const day = d.toLocaleDateString("en-GB", { weekday: "short" });
+  const date = d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+  return `${day} ${date}`;
+};
+const NEXT_BATCH_DATE =
+  _batchParts.length >= 2
+    ? `${_fmt(_batchParts[0])} – ${_fmt(_batchParts[1])}`
+    : (_batchParts[0] ? _fmt(_batchParts[0]) : "To Be Announced");
   // Replace this with your actual WhatsApp group link
   const WHATSAPP_GROUP_LINK = "https://chat.whatsapp.com/FZmvtzHcs4qL5LHNttDVSf";
 
   const details: Array<{ label: string; value: string; icon: React.ReactNode }> = [
     { label: "Workshop", value: "Data Analysis in Motorsports", icon: <Trophy className="h-4 w-4" /> },
     { label: "Duration", value: "6 Hours", icon: <Clock className="h-4 w-4" /> },
-    { label: "Date", value: "23rd / 24th May", icon: <Calendar className="h-4 w-4" /> },
+    { label: "Date", value: NEXT_BATCH_DATE, icon: <Calendar className="h-4 w-4" /> },
     { label: "Time", value: "To Be Announced", icon: <Clock className="h-4 w-4" /> },
     { label: "Mode", value: "Online Live Workshop", icon: <Wifi className="h-4 w-4" /> },
     { label: "Fee Paid", value: "₹999", icon: <Gauge className="h-4 w-4" /> },
@@ -166,7 +180,7 @@ function ThankYouPage() {
     {
       icon: <Calendar className="h-5 w-5" />,
       title: "Batch Details",
-      body: "The final time and joining link for the 23rd / 24th May workshop will be shared before the session.",
+      body: `The final time and joining link for the ${NEXT_BATCH_DATE} workshop will be shared before the session.`,
     },
     {
       icon: <Radio className="h-5 w-5" />,
@@ -292,7 +306,7 @@ function ThankYouPage() {
 
           {/* CTAs */}
           <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap">
-            {WHATSAPP_GROUP_LINK && WHATSAPP_GROUP_LINK !== "https://chat.whatsapp.com/YOUR_GROUP_INVITE_CODE" ? (
+            {WHATSAPP_GROUP_LINK  ? (
               <a
                 href={WHATSAPP_GROUP_LINK}
                 target="_blank"
