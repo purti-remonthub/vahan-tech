@@ -827,16 +827,28 @@ function Audience() {
 // ────────────────────────── AGENDA ──────────────────────────
 function Agenda() {
   const hours = [
-    { h: "Hour 1", t: "Motorsport Data Foundations", points: ["What data engineers look at after a run", "Common telemetry channels: speed, RPM, throttle, brake, steering, G-force, tyre temperature", "How raw logged data becomes engineering insight"] },
-    { h: "Hour 2", t: "Reading Driver Inputs", points: ["Throttle trace", "Brake trace", "Steering trace", "Identifying over-driving, late braking, early throttle, inconsistent inputs"] },
-    { h: "Hour 3", t: "Lap & Sector Comparison", points: ["Fast lap vs slow lap", "Sector delta", "Entry, mid-corner and exit analysis", "Where lap time is gained or lost"] },
-    { h: "Hour 4", t: "Vehicle Dynamics Through Data", points: ["Grip, lateral G, understeer/oversteer indicators", "Tyre temperature & pressure interpretation", "Setup thinking from data"] },
-    { h: "Hour 5", t: "Hands-On Dataset Practice", points: ["Real-time race data provided", "Guided analysis exercise", "Build a simple performance report"] },
+    { h: "Hour 1", t: "Motorsport Data Foundations", points: 
+      ["What data engineers look at after a run"
+        ,"Sensor Acquisition: Accelerometers, GPS, Strain Gauge, Potentiometers",
+        "Common telemetry channels: speed, RPM, latG, longG, YawRate/GyroZ, suspension travel",
+         "How raw logged data becomes engineering insight."] },
+    { h: "Hour 2", t: "Reading Driver Inputs", points: ["Throttle trace", "Brake trace", "Gearing trace",
+       "Identifying friction circle, late braking, early braking, trailbraking, driver confidence, apexes."] },
+    { h: "Hour 3", t: "Lap & Sector Comparison", points: ["Fast lap vs slow lap",
+       "Instantaneous Variance and Cumulative Variance",
+        "Entry, mid-corner, and exit analysis",
+         "Where lap time is gained or lost"] },
+    { h: "Hour 4", t: "Vehicle Dynamics Through Data", points: ["Grip factors,Lateral load transfer distribution, understeer/oversteer indicators", 
+      "Tyre temperature and Pressure", 
+      "Set up thinking from data"] },
+    { h: "Hour 5", t: "Hands-On Dataset Practice", points: ["Real race data provided",
+       "Guided analysis exercise",
+        "Build a simple performance report"] },
     { h: "Hour 6", t: "Career Path", points: ["How race engineers and performance analysts work", "What to learn after this workshop", "Q&A and certificate briefing"] },
   ];
 
   return (
-    <section id="agenda" className="relative pt-12 lg:py-24 bg-[#060A0F] overflow-hidden">
+    <section id="agenda" className="relative pt-12 py-24 bg-[#060A0F] overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
@@ -858,30 +870,30 @@ function Agenda() {
         {/* Vertical timeline */}
         <div className="relative">
           {/* Timeline line - visible on desktop only */}
-          <div className="hidden lg:block absolute left-6 top-2 bottom-2 w-px bg-gradient-to-b from-[var(--racing-red)] via-[var(--steel)] to-transparent" />
+          <div className="block absolute left-6 top-2 bottom-2 w-px bg-gradient-to-b from-[var(--racing-red)] via-[var(--steel)] to-transparent" />
           
-          <div className="space-y-6 lg:space-y-4">
+          <div className="space-y-6 space-y-4">
             {hours.map((h, i) => (
-              <div key={h.h} className="relative lg:pl-16">
+              <div key={h.h} className="relative pl-16">
                 {/* Number circle */}
-                <div className="flex items-start gap-4 lg:block">
-                  <div className="flex-shrink-0 lg:absolute lg:left-0 lg:top-4 size-12 lg:size-12 rounded-full border-2 border-[var(--racing-red)] bg-[#060A0F] flex items-center justify-center font-mono text-sm lg:text-xs font-bold text-[var(--racing-red)]">
+                <div className="flex items-start gap-4 block">
+                  <div className="flex-shrink-0 absolute left-0 top-4 size-12 size-12 rounded-full border-2 border-[var(--racing-red)] bg-[#060A0F] flex items-center justify-center font-mono text-sm text-xs font-bold text-[var(--racing-red)]">
                     {String(i + 1).padStart(2, "0")}
                   </div>
                   
                   {/* Content */}
-                  <div className="flex-1 lg:rounded-xl lg:border lg:border-border lg:bg-[var(--card)]/80 lg:backdrop-blur-sm lg:p-6 lg:hover:border-[var(--racing-red)]/40 lg:transition">
+                  <div className="flex-1 rounded-xl border border-border bg-[var(--card)]/80 backdrop-blur-sm p-6 hover:border-[var(--racing-red)]/40 transition">
                     {/* Desktop only: HOUR label with divider */}
-                    <div className="hidden lg:flex items-center gap-3 mb-3">
+                    <div className=" hidden lg:flex items-center gap-3 mb-3">
                       <span className="font-mono text-[10px] tracking-widest text-[var(--racing-red)]">{h.h.toUpperCase()}</span>
                       <div className="h-px flex-1 bg-border" />
                     </div>
                     
-                    <h3 className="font-heading text-xl lg:text-2xl text-white mb-2 lg:mb-3">{h.t}</h3>
-                    <p className="text-sm text-gray-400 lg:hidden">{h.points.join(", ")}</p>
+                    <h3 className="font-heading text-xl text-2xl text-white mb-2 mb-3">{h.t}</h3>
+                    {/* <p className="text-sm text-gray-400 lg:hidden">{h.points.join(", ")}</p> */}
                     
                     {/* Desktop only: bullet list */}
-                    <ul className="hidden lg:block space-y-1.5">
+                    <ul className="block space-y-1.5">
                       {h.points.map((p) => (
                         <li key={p} className="flex gap-2 text-sm text-[var(--muted-foreground)]">
                           <span className="text-[var(--racing-red)] mt-0.5">›</span>{p}
