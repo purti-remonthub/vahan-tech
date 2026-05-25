@@ -93,9 +93,9 @@ function PaymentRedirectModal({
           <div className="flex flex-col items-center text-center gap-5">
             <Loader2 className="size-12 text-[var(--racing-red)] animate-spin" aria-hidden />
             <div>
-              <h2 id="payment-modal-title" className="font-display text-2xl text-white uppercase tracking-wide">
+              {/* <h2 id="payment-modal-title" className="font-display text-2xl text-white uppercase tracking-wide">
                 Redirecting to payment
-              </h2>
+              </h2> */}
               <p className="mt-2 text-sm text-gray-400">
               Please wait for the confirmation after making the payment.
               </p>
@@ -115,7 +115,7 @@ function PaymentRedirectModal({
             <h2 id="payment-modal-title" className="font-display text-2xl text-white uppercase tracking-wide">
               Payment unavailable
             </h2>
-            <p className="text-sm text-gray-400">
+            <p className="text-xl font-bold text-white text-center tracking-wide">
               The payment link is not configured yet. Please try again later or contact us on WhatsApp.
             </p>
             <button
