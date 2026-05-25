@@ -100,14 +100,14 @@ function PaymentRedirectModal({
               Please wait for the confirmation after making the payment.
               </p>
             </div>
-            <div className="w-full rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-left">
+            {/* <div className="w-full rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-left">
               <div className="flex gap-3">
                 <AlertTriangle className="size-5 text-amber-400 shrink-0 mt-0.5" aria-hidden />
                 <p className="text-xs sm:text-sm text-amber-100/90 leading-relaxed">
                   <strong className="text-amber-300">Do not close or refresh this tab.</strong> Complete payment on the next page. Your seat is confirmed only after successful payment.
                 </p>
               </div>
-            </div>
+            </div> */}
           </div>
         ) : (
           <div className="flex flex-col items-center text-center gap-4">
