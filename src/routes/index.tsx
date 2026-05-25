@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import {
   Flag, Gauge, Timer, Trophy, Zap, CheckCircle2, XCircle, Clock,
   Database, LineChart, Users, Award, Wrench, Activity, ArrowRight,
   Mail, Phone, Globe, Calendar, MapPin, GraduationCap, ChevronRight,
-  MessageCircle, PlayCircle,
+  MessageCircle, PlayCircle, Loader2, AlertTriangle,
 } from "lucide-react";
 import { TelemetryDashboard } from "@/components/TelemetryDashboard";
 import { FAQ } from "@/components/FAQ";
@@ -43,14 +43,114 @@ const NEXT_BATCH_TIME = "Weekend Slot — To Be Announced";
 //   Motorsport/Automotive Background,
 //   Primary Interest: Race Engineering / Vehicle Dynamics / Data Analysis /
 //                     Formula Student / Automotive R&D / Just Exploring
-  function handlePayment() {
-    window.location.href = import.meta.env.VITE_RAZORPAY_PAYMENT_LINK;
-  }
+
+function getPaymentLink(): string | null {
+  const env = import.meta.env.VITE_RAZORPAY_PAYMENT_LINK?.trim();
+  const link = env || RAZORPAY_PAYMENT_LINK;
+  if (!link || link === "PASTE_RAZORPAY_PAYMENT_LINK_HERE") return null;
+  return link;
+}
+
+type PaymentModalState = null | "redirecting" | "error";
+
+const PaymentContext = createContext<{ handlePaymentButton: () => void } | null>(null);
+
+function usePaymentButton() {
+  const ctx = useContext(PaymentContext);
+  if (!ctx) throw new Error("usePaymentButton must be used within PaymentContext");
+  return ctx;
+}
+
+function PaymentRedirectModal({
+  state,
+  onClose,
+}: {
+  state: PaymentModalState;
+  onClose: () => void;
+}) {
+  if (!state) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="payment-modal-title"
+    >
+      <div className="relative w-full max-w-md rounded-2xl border border-white/10 bg-[#0D1219] p-6 sm:p-8 shadow-[0_30px_80px_-20px_rgba(225,6,0,0.45)]">
+        {state === "error" && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl leading-none"
+            aria-label="Close"
+          >
+            ×
+          </button>
+        )}
+
+        {state === "redirecting" ? (
+          <div className="flex flex-col items-center text-center gap-5">
+            <Loader2 className="size-12 text-[var(--racing-red)] animate-spin" aria-hidden />
+            <div>
+              <h2 id="payment-modal-title" className="font-display text-2xl text-white uppercase tracking-wide">
+                Redirecting to payment
+              </h2>
+              <p className="mt-2 text-sm text-gray-400">
+              Please wait for the confirmation after making the payment.
+              </p>
+            </div>
+            <div className="w-full rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-left">
+              <div className="flex gap-3">
+                <AlertTriangle className="size-5 text-amber-400 shrink-0 mt-0.5" aria-hidden />
+                <p className="text-xs sm:text-sm text-amber-100/90 leading-relaxed">
+                  <strong className="text-amber-300">Do not close or refresh this tab.</strong> Complete payment on the next page. Your seat is confirmed only after successful payment.
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center text-center gap-4">
+            <AlertTriangle className="size-12 text-amber-400" aria-hidden />
+            <h2 id="payment-modal-title" className="font-display text-2xl text-white uppercase tracking-wide">
+              Payment unavailable
+            </h2>
+            <p className="text-sm text-gray-400">
+              The payment link is not configured yet. Please try again later or contact us on WhatsApp.
+            </p>
+            <button
+              type="button"
+              onClick={onClose}
+              className="mt-2 rounded-lg px-6 py-2.5 text-sm font-semibold text-white border border-white/20 hover:bg-white/10 transition"
+            >
+              Close
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 // =============================================================================
 
 function Index() {
   const [scroll, setScroll] = useState(0);
+  const [paymentModal, setPaymentModal] = useState<PaymentModalState>(null);
+
+  const handlePaymentButton = useCallback(() => {
+    const url = getPaymentLink();
+    if (!url) {
+      setPaymentModal("error");
+      return;
+    }
+    setPaymentModal("redirecting");
+    window.setTimeout(() => {
+      window.location.href = url;
+    }, 1800);
+  }, []);
+
+  const closePaymentModal = useCallback(() => setPaymentModal(null), []);
   useEffect(() => {
     const onScroll = () => {
       const h = document.documentElement;
@@ -62,7 +162,10 @@ function Index() {
   }, []);
 
   return (
+    <PaymentContext.Provider value={{ handlePaymentButton }}>
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
+      <PaymentRedirectModal state={paymentModal} onClose={closePaymentModal} />
+
       {/* Scroll progress */}
       <div className="fixed top-0 left-0 right-0 h-0.5 z-50 bg-transparent">
         <div className="h-full bg-[var(--racing-red)] transition-[width] duration-150" style={{ width: `${scroll}%` }} />
@@ -92,12 +195,14 @@ function Index() {
       <Footer />
       <MobileStickyCTA />
     </div>
+    </PaymentContext.Provider>
   );
 }
 
 // ────────────────────────── HEADER ──────────────────────────
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { handlePaymentButton } = usePaymentButton();
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-[#0A0E13]/95 border-b border-white/10">
@@ -114,7 +219,7 @@ function Header() {
 
         <div className="flex items-center gap-3">
           <button
-            onClick={handlePayment}
+            onClick={handlePaymentButton}
             className="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs sm:text-sm font-semibold text-white tracking-wide transition hover:scale-[1.02]"
             style={{ background: "var(--gradient-red)" }}
           >
@@ -209,6 +314,7 @@ function HeroTelemetryCard({
 }
 
 function Hero() {
+  const { handlePaymentButton } = usePaymentButton();
   const trustIndicators = [
     { icon: Users, label: "1000+", sub: "Learners" },
     { icon: Trophy, label: "150+", sub: "Motorsport Professionals" },
@@ -286,7 +392,7 @@ function Hero() {
             {/* CTA Buttons — full width on mobile */}
             <div className="flex flex-col gap-3 sm:flex-row">
               <button
-                onClick={handlePayment}
+                onClick={handlePaymentButton}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg px-7 py-4 text-sm font-semibold text-white tracking-wide transition hover:scale-[1.02]"
                 style={{ background: "var(--gradient-red)" }}
               >
@@ -1061,6 +1167,7 @@ function Trainer() {
 
 // ────────────────────────── OFFER ──────────────────────────
 function Offer() {
+  const { handlePaymentButton } = usePaymentButton();
   return (
     <Section id="offer" eyebrow="THE OFFER">
       <SectionHeading>Book the Next <span className="text-gradient-red">Weekend Workshop</span></SectionHeading>
@@ -1083,7 +1190,7 @@ function Offer() {
               <li key={x} className="flex gap-3 text-sm"><CheckCircle2 className="size-5 text-[var(--telemetry-green)] shrink-0" />{x}</li>
             ))}
           </ul>
-          <button onClick={handlePayment} className="w-full inline-flex items-center justify-center gap-2 rounded-md px-6 py-4 font-semibold text-white glow-red transition hover:scale-[1.01]" style={{ background: "var(--gradient-red)" }}>
+          <button onClick={handlePaymentButton} className="w-full inline-flex items-center justify-center gap-2 rounded-md px-6 py-4 font-semibold text-white glow-red transition hover:scale-[1.01]" style={{ background: "var(--gradient-red)" }}>
             Reserve My Seat for {WORKSHOP_PRICE}
             <ArrowRight className="size-4" />
           </button>
@@ -1138,6 +1245,7 @@ function FOMO() {
 
 // ────────────────────────── UPSELL ──────────────────────────
 function Upsell() {
+  const { handlePaymentButton } = usePaymentButton();
   const modules = [
     "Data Logging & Analysis", "Setup Measurements", "Tyre Science",
     "Cornering Dynamics", "Suspension Geometry & Load Transfer",
@@ -1159,7 +1267,7 @@ function Upsell() {
         ))}
       </div>
       <div className="text-center">
-        <button onClick={handlePayment} className="inline-flex items-center justify-center gap-2 rounded-md px-6 py-3.5 font-semibold text-white glow-red transition hover:scale-[1.02]" style={{ background: "var(--gradient-red)" }}>
+        <button onClick={handlePaymentButton} className="inline-flex items-center justify-center gap-2 rounded-md px-6 py-3.5 font-semibold text-white glow-red transition hover:scale-[1.02]" style={{ background: "var(--gradient-red)" }}>
           Join Workshop First
           <ArrowRight className="size-4" />
         </button>
@@ -1179,6 +1287,7 @@ function FAQSection() {
 
 // ────────────────────────── FINAL CTA ──────────────────────────
 function FinalCTA() {
+  const { handlePaymentButton } = usePaymentButton();
   return (
     <section className="relative overflow-hidden min-h-[420px] flex items-center bg-[#0A0E13]">
       {/* Mobile: full-cover centered image */}
@@ -1215,7 +1324,7 @@ function FinalCTA() {
           <p className="mt-5 text-gray-300 max-w-xl mx-auto lg:mx-0">
             Join hundreds of aspiring engineers and start thinking like the teams on the grid.
           </p>
-          <button onClick={handlePayment} className="mt-8 w-full lg:w-auto inline-flex items-center justify-center gap-2 rounded-md px-8 py-4 text-sm font-semibold text-white tracking-widest transition hover:scale-[1.02]" style={{ background: "var(--gradient-red)" }}>
+          <button onClick={handlePaymentButton} className="mt-8 w-full lg:w-auto inline-flex items-center justify-center gap-2 rounded-md px-8 py-4 text-sm font-semibold text-white tracking-widest transition hover:scale-[1.02]" style={{ background: "var(--gradient-red)" }}>
             RESERVE YOUR SEAT · {WORKSHOP_PRICE}
           </button>
           <p className="mt-3 font-mono text-[10px] text-gray-400 tracking-widest">Limited Seats. Reserve Now!</p>
@@ -1281,6 +1390,7 @@ function Footer() {
 
 // ────────────────────────── MOBILE STICKY CTA ──────────────────────────
 function MobileStickyCTA() {
+  const { handlePaymentButton } = usePaymentButton();
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden border-t border-border bg-[#060A0F]/95 backdrop-blur-md">
       <div className="px-4 py-3 flex items-center justify-between gap-3">
@@ -1288,7 +1398,7 @@ function MobileStickyCTA() {
           <div className="font-mono text-[9px] tracking-widest text-[var(--muted-foreground)]">WEEKEND WORKSHOP</div>
           <div className="font-display text-lg leading-none mt-0.5">{WORKSHOP_PRICE} · Book Seat</div>
         </div>
-        <button onClick={handlePayment} className="shrink-0 inline-flex items-center gap-1.5 rounded-md px-4 py-2.5 text-sm font-semibold text-white glow-red" style={{ background: "var(--gradient-red)" }}>
+        <button onClick={handlePaymentButton} className="shrink-0 inline-flex items-center gap-1.5 rounded-md px-4 py-2.5 text-sm font-semibold text-white glow-red" style={{ background: "var(--gradient-red)" }}>
           Pay Now <ArrowRight className="size-4" />
         </button>
       </div>
@@ -1326,11 +1436,12 @@ function Card({ children, className = "" }: { children: React.ReactNode; classNa
 }
 
 function CTABand({ label }: { label: string }) {
+  const { handlePaymentButton } = usePaymentButton();
   return (
     <section className="border-y border-border bg-[var(--bg-2)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
         <p className="font-heading text-lg sm:text-xl text-center sm:text-left">{label}</p>
-        <button onClick={handlePayment} className="inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold text-white glow-red transition hover:scale-[1.02]" style={{ background: "var(--gradient-red)" }}>
+        <button onClick={handlePaymentButton} className="inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold text-white glow-red transition hover:scale-[1.02]" style={{ background: "var(--gradient-red)" }}>
           Book Weekend Workshop · {WORKSHOP_PRICE}
           <ArrowRight className="size-4" />
         </button>
