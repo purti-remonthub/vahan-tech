@@ -160,7 +160,7 @@ const NEXT_BATCH_DATE =
     ? `${_fmt(_batchParts[0])} – ${_fmt(_batchParts[1])}`
     : (_batchParts[0] ? _fmt(_batchParts[0]) : "To Be Announced");
   // Replace this with your actual WhatsApp group link
-  const WHATSAPP_GROUP_LINK = "https://chat.whatsapp.com/FZmvtzHcs4qL5LHNttDVSf";
+  const WHATSAPP_GROUP_LINK = "https://chat.whatsapp.com/EXwTQqkvQJkBeknSIgglhg";
 
   const details: Array<{ label: string; value: string; icon: React.ReactNode }> = [
     { label: "Workshop", value: "Data Analysis in Motorsports", icon: <Trophy className="h-4 w-4" /> },
